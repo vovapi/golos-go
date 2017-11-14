@@ -87,43 +87,6 @@ func (api *Client) Comment(user_name, author_name, ppermlink, body string) error
 	}
 }
 
-func (api *Client) Comment_Vote(user_name, author_name, ppermlink, body string, weight_post int) error {
-	if weight_post > 10000 {
-		weight_post = 10000
-	}
-	times, _ := strconv.Unquote(time.Now().Add(30 * time.Second).UTC().Format(fdt))
-	permlink := "re-" + author_name + "-" + ppermlink + "-" + times
-	var trx []types.Operation
-	txc := &types.CommentOperation{
-		ParentAuthor:   author_name,
-		ParentPermlink: ppermlink,
-		Author:         user_name,
-		Permlink:       permlink,
-		Title:          "",
-		Body:           body,
-		JsonMetadata:   "{\"app\":\"golos-go(go-steem)\"}",
-	}
-	trx = append(trx, txc)
-
-	if !api.Verify_Voter_Weight(author_name, permlink, user_name, weight_post) {
-		txv := &types.VoteOperation{
-			Voter:    user_name,
-			Author:   author_name,
-			Permlink: ppermlink,
-			Weight:   types.Int16(weight_post),
-		}
-		trx = append(trx, txv)
-	}
-
-	resp, err := api.Send_Arr_Trx(user_name, trx)
-	if err != nil {
-		return errors.Wrapf(err, "Error Comment and Vote: ")
-	} else {
-		log.Println("[Comment and Vote] Block -> ", resp.BlockNum, " User -> ", user_name)
-		return nil
-	}
-}
-
 func (api *Client) DeleteComment(author_name, permlink string) error {
 	if api.Verify_Votes(author_name, permlink) {
 		return errors.New("You can not delete already there are voted")
@@ -664,6 +627,21 @@ func (api *Client) WithdrawVesting(account, vshares string) error {
 		return errors.Wrapf(err, "Error WithdrawVesting: ")
 	} else {
 		log.Println("[WithdrawVesting] Block -> ", resp.BlockNum, " WithdrawVesting user -> ", account)
+		return nil
+	}
+}
+
+func (api *Client) CancelWithdrawVesting(account string) error {
+	tx := &types.WithdrawVestingOperation{
+		Account:       account,
+		VestingShares: "0.000000 GESTS",
+	}
+
+	resp, err := api.Send_Trx(account, tx)
+	if err != nil {
+		return errors.Wrapf(err, "Error CancelWithdrawVesting: ")
+	} else {
+		log.Println("[CancelWithdrawVesting] Block -> ", resp.BlockNum, " CancelWithdrawVesting user -> ", account)
 		return nil
 	}
 }

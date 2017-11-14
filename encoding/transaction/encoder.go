@@ -139,11 +139,22 @@ func (encoder *Encoder) EncodeMoney(s string) error {
 		if err := binary.Write(encoder.w, binary.LittleEndian, amm); err != nil {
 			return errors.Wrapf(err, "encoder: failed to write number: %v", amm)
 		}
+
+		bas := make([]byte, binary.MaxVarintLen64)
+		n := binary.PutUvarint(bas, uint64(len(asset[1])))
+		if _, err := encoder.w.Write(bas[:n]); err != nil {
+			return errors.Wrapf(err, "encoder: failed to write bytes: %v", bas)
+		}
+
+		if _, err := io.Copy(encoder.w, strings.NewReader(asset[1])); err != nil {
+			return errors.Wrapf(err, "encoder: failed to write string: %v", asset[1])
+		}
+
 		if err := binary.Write(encoder.w, binary.LittleEndian, byte(perc)); err != nil {
 			return errors.Wrapf(err, "encoder: failed to write number: %v", perc)
 		}
 
-		if _, err := io.Copy(encoder.w, strings.NewReader(asset[1])); err != nil {
+		/*if _, err := io.Copy(encoder.w, strings.NewReader(asset[1])); err != nil {
 			return errors.Wrapf(err, "encoder: failed to write string: %v", asset[1])
 		}
 
@@ -151,7 +162,7 @@ func (encoder *Encoder) EncodeMoney(s string) error {
 			if err := binary.Write(encoder.w, binary.LittleEndian, byte(0)); err != nil {
 				return errors.Wrapf(err, "encoder: failed to write number: %v", 0)
 			}
-		}
+		}*/
 		return nil
 	} else {
 		return errors.New("Expecting amount like '99.000 SYMBOL'")

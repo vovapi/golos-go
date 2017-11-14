@@ -52,7 +52,6 @@ var dataObjects = map[OpType]Operation{
 	TypeDeclineVotingRights:         &DeclineVotingRightsOperation{},
 	TypeResetAccount:                &ResetAccountOperation{},
 	TypeSetResetAccount:             &SetResetAccountOperation{},
-	TypeClaimRewardBalance:          &ClaimRewardBalanceOperation{},
 	TypeDelegateVestingShares:       &DelegateVestingSharesOperation{},
 	TypeAccountCreateWithDelegation: &AccountCreateWithDelegationOperation{},
 	TypeFillConvertRequest:          &FillConvertRequestOperation{},

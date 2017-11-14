@@ -12,7 +12,7 @@ import (
 func (api *Client) Verify_Voter_Weight(author, permlink, voter string, weight int) bool {
 	ans, err := api.Rpc.Database.GetActiveVotes(author, permlink)
 	if err != nil {
-		log.Println(errors.Wrapf(err, "Error Verify Voter: "))
+		log.Println(errors.Wrapf(err, "Error Verify Voter Weight: "))
 		return false
 	} else {
 		for _, v := range ans {

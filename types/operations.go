@@ -32,7 +32,7 @@ func (op *ReportOverProductionOperation) Data() interface{} {
 
 type ConvertOperation struct {
 	Owner     string `json:"owner"`
-	RequestID uint32 `json:"requestid"`
+	RequestID uint32 `json:"request_id"`
 	Amount    string `json:"amount"`
 }
 
@@ -947,21 +947,6 @@ func (op *SetResetAccountOperation) Type() OpType {
 }
 
 func (op *SetResetAccountOperation) Data() interface{} {
-	return op
-}
-
-type ClaimRewardBalanceOperation struct {
-	Account     string `json:"account"`
-	RewardSteem string `json:"reward_steem"`
-	RewardSbd   string `json:"reward_sbd"`
-	RewardVests string `json:"reward_vests"`
-}
-
-func (op *ClaimRewardBalanceOperation) Type() OpType {
-	return TypeClaimRewardBalance
-}
-
-func (op *ClaimRewardBalanceOperation) Data() interface{} {
 	return op
 }
 
