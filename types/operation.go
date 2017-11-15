@@ -13,6 +13,46 @@ import (
 // dataObjects keeps mapping operation type -> operation data object.
 // This is used later on to unmarshal operation data based on the operation type.
 var dataObjects = map[OpType]Operation{
+	TypeVote16:                      &Vote16Operation{},
+	TypeComment16:                   &Comment16Operation{},
+	TypeTransfer16:                  &Transfer16Operation{},
+	TypeTransferToVesting16:         &TransferToVesting16Operation{},
+	TypeWithdrawVesting16:           &WithdrawVesting16Operation{},
+	TypeLimitOrderCreate16:          &LimitOrderCreate16Operation{},
+	TypeLimitOrderCancel16:          &LimitOrderCancel16Operation{},
+	TypeFeedPublish16:               &FeedPublish16Operation{},
+	TypeConvert16:                   &Convert16Operation{},
+	TypeAccountCreate16:             &AccountCreate16Operation{},
+	TypeAccountUpdate16:             &AccountUpdate16Operation{},
+	TypeWitnessUpdate16:             &WitnessUpdate16Operation{},
+	TypeAccountWitnessVote16:        &AccountWitnessVote16Operation{},
+	TypeAccountWitnessProxy16:       &AccountWitnessProxy16Operation{},
+	TypePow16:                       &Pow16Operation{},
+	TypeCustom:                      &CustomOperation{},
+	TypeReportOverProduction16:      &ReportOverProduction16Operation{},
+	TypeDeleteComment16:             &DeleteComment16Operation{},
+	TypeCustomJSON:                  &CustomJSONOperation{},
+	TypeCommentOptions16:            &CommentOptions16Operation{},
+	TypeSetWithdrawVestingRoute16:   &SetWithdrawVestingRoute16Operation{},
+	TypeLimitOrderCreate216:         &LimitOrderCreate216Operation{},
+	TypeChallengeAuthority16:        &ChallengeAuthority16Operation{},
+	TypeProveAuthority16:            &ProveAuthority16Operation{},
+	TypeRequestAccountRecovery16:    &RequestAccountRecovery16Operation{},
+	TypeRecoverAccount16:            &RecoverAccount16Operation{},
+	TypeChangeRecoveryAccount16:     &ChangeRecoveryAccount16Operation{},
+	TypeEscrowTransfer16:            &EscrowTransfer16Operation{},
+	TypeEscrowDispute16:             &EscrowDispute16Operation{},
+	TypeEscrowRelease16:             &EscrowRelease16Operation{},
+	TypePow216:                      &Pow216Operation{},
+	TypeEscrowApprove16:             &EscrowApprove16Operation{},
+	TypeTransferToSavings16:         &TransferToSavings16Operation{},
+	TypeTransferFromSavings16:       &TransferFromSavings16Operation{},
+	TypeCancelTransferFromSavings16: &CancelTransferFromSavings16Operation{},
+	TypeCustomBinary:                &CustomBinaryOperation{},
+	TypeDeclineVotingRights16:       &DeclineVotingRights16Operation{},
+	TypeResetAccount16:              &ResetAccount16Operation{},
+	TypeSetResetAccount16:           &SetResetAccount16Operation{},
+	TypeCommentBenefactorReward16:   &CommentBenefactorReward16Operation{},
 	TypeVote:                        &VoteOperation{},
 	TypeComment:                     &CommentOperation{},
 	TypeTransfer:                    &TransferOperation{},
@@ -28,10 +68,8 @@ var dataObjects = map[OpType]Operation{
 	TypeAccountWitnessVote:          &AccountWitnessVoteOperation{},
 	TypeAccountWitnessProxy:         &AccountWitnessProxyOperation{},
 	TypePOW:                         &POWOperation{},
-	TypeCustom:                      &CustomOperation{},
 	TypeReportOverProduction:        &ReportOverProductionOperation{},
 	TypeDeleteComment:               &DeleteCommentOperation{},
-	TypeCustomJSON:                  &CustomJSONOperation{},
 	TypeCommentOptions:              &CommentOptionsOperation{},
 	TypeSetWithdrawVestingRoute:     &SetWithdrawVestingRouteOperation{},
 	TypeLimitOrderCreate2:           &LimitOrderCreate2Operation{},
@@ -48,26 +86,61 @@ var dataObjects = map[OpType]Operation{
 	TypeTransferToSavings:           &TransferToSavingsOperation{},
 	TypeTransferFromSavings:         &TransferFromSavingsOperation{},
 	TypeCancelTransferFromSavings:   &CancelTransferFromSavingsOperation{},
-	TypeCustomBinary:                &CustomBinaryOperation{},
 	TypeDeclineVotingRights:         &DeclineVotingRightsOperation{},
 	TypeResetAccount:                &ResetAccountOperation{},
 	TypeSetResetAccount:             &SetResetAccountOperation{},
+	TypeCommentBenefactorReward:     &CommentBenefactorRewardOperation{},
 	TypeDelegateVestingShares:       &DelegateVestingSharesOperation{},
 	TypeAccountCreateWithDelegation: &AccountCreateWithDelegationOperation{},
-	TypeFillConvertRequest:          &FillConvertRequestOperation{},
-	TypeAuthorReward:                &AuthorRewardOperation{},
-	TypeCurationReward:              &CurationRewardOperation{},
-	TypeCommentReward:               &CommentRewardOperation{},
-	TypeLiquidityReward:             &LiquidityRewardOperation{},
-	TypeInterest:                    &InterestOperation{},
-	TypeFillVestingWithdraw:         &FillVestingWithdrawOperation{},
-	TypeFillOrder:                   &FillOrderOperation{},
-	TypeShutdownWitness:             &ShutdownWitnessOperation{},
-	TypeFillTransferFromSavings:     &FillTransferFromSavingsOperation{},
-	TypeHardfork:                    &HardforkOperation{},
-	TypeCommentPayoutUpdate:         &CommentPayoutUpdateOperation{},
-	TypeReturnVestingDelegation:     &ReturnVestingDelegationOperation{},
-	TypeCommentBenefactorReward:     &CommentBenefactorRewardOperation{},
+	TypeCommentPayoutExtension:      &CommentPayoutExtensionOperation{},
+	TypeAssetCreate:                 &AssetCreateOperation{},
+	TypeAssetUpdate:                 &AssetUpdateOperation{},
+	TypeAssetUpdateBitasset:         &AssetUpdateBitassetOperation{},
+	TypeAssetUpdateFeedProducers:    &AssetUpdateFeedProducersOperation{},
+	TypeAssetIssue:                  &AssetIssueOperation{},
+	TypeAssetReserve:                &AssetReserveOperation{},
+	TypeAssetFundFeePool:            &AssetFundFeePoolOperation{},
+	TypeAssetSettle:                 &AssetSettleOperation{},
+	TypeAssetForceSettle:            &AssetForceSettleOperation{},
+	TypeAssetGlobalSettle:           &AssetGlobalSettleOperation{},
+	TypeAssetPublishFeed:            &AssetPublishFeedOperation{},
+	TypeAssetClaimFees:              &AssetClaimFeesOperation{},
+	TypeCallOrderUpdate:             &CallOrderUpdateOperation{},
+	TypeAccountWhitelist:            &AccountWhitelistOperation{},
+	TypeOverrideTransfer:            &OverrideTransferOperation{},
+	TypeProposalCreate:              &ProposalCreateOperation{},
+	TypeProposalUpdate:              &ProposalUpdateOperation{},
+	TypeProposalDelete:              &ProposalDeleteOperation{},
+	TypeBidCollateral:               &BidCollateralOperation{},
+	TypeFillConvertRequest16:        &FillConvertRequest16Operation{},      //Virtual
+	TypeAuthorReward16:              &AuthorReward16Operation{},            //Virtual
+	TypeCurationReward16:            &CurationReward16Operation{},          //Virtual
+	TypeCommentReward16:             &CommentReward16Operation{},           //Virtual
+	TypeLiquidityReward16:           &LiquidityReward16Operation{},         //Virtual
+	TypeInterest16:                  &Interest16Operation{},                //Virtual
+	TypeFillVestingWithdraw16:       &FillVestingWithdraw16Operation{},     //Virtual
+	TypeFillOrder16:                 &FillOrder16Operation{},               //Virtual
+	TypeShutdownWitness16:           &ShutdownWitness16Operation{},         //Virtual
+	TypeFillTransferFromSavings16:   &FillTransferFromSavings16Operation{}, //Virtual
+	TypeHardfork16:                  &Hardfork16Operation{},                //Virtual
+	TypeCommentPayoutUpdate16:       &CommentPayoutUpdate16Operation{},     //Virtual
+	TypeFillConvertRequest:          &FillConvertRequestOperation{},        //Virtual
+	TypeAuthorReward:                &AuthorRewardOperation{},              //Virtual
+	TypeCurationReward:              &CurationRewardOperation{},            //Virtual
+	TypeCommentReward:               &CommentRewardOperation{},             //Virtual
+	TypeLiquidityReward:             &LiquidityRewardOperation{},           //Virtual
+	TypeInterest:                    &InterestOperation{},                  //Virtual
+	TypeFillVestingWithdraw:         &FillVestingWithdrawOperation{},       //Virtual
+	TypeFillOrder:                   &FillOrderOperation{},                 //Virtual
+	TypeShutdownWitness:             &ShutdownWitnessOperation{},           //Virtual
+	TypeFillTransferFromSavings:     &FillTransferFromSavingsOperation{},   //Virtual
+	TypeHardfork:                    &HardforkOperation{},                  //Virtual
+	TypeCommentPayoutUpdate:         &CommentPayoutUpdateOperation{},       //Virtual
+	TypeReturnVestingDelegation:     &ReturnVestingDelegationOperation{},   //Virtual
+	TypeAssetSettleCancel:           &AssetSettleCancelOperation{},         //Virtual
+	TypeFillCallOrder:               &FillCallOrderOperation{},             //Virtual
+	TypeFillSettlementOrder:         &FillSettlementOrderOperation{},       //Virtual
+	TypeExecuteBid:                  &ExecuteBidOperation{},                //Virtual
 }
 
 // Operation represents an operation stored in a transaction.
