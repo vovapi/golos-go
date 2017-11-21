@@ -26,11 +26,11 @@ func init() {
 	OpTypeKey["account_create"] = []string{"active"}
 	OpTypeKey["account_update"] = []string{"active"}
 	OpTypeKey["witness_update"] = []string{"active"}
-	OpTypeKey["account_witness_vote"] = []string{"active"}
-	OpTypeKey["account_witness_proxy"] = []string{"active"}
+	OpTypeKey["account_witness_vote"] = []string{"posting"}
+	OpTypeKey["account_witness_proxy"] = []string{"posting"}
 	OpTypeKey["pow"] = []string{"active"}
 	OpTypeKey["custom"] = []string{"active"}
-	OpTypeKey["report_over_production"] = []string{"posting"}
+	OpTypeKey["report_over_production"] = []string{"active"}
 	OpTypeKey["delete_comment"] = []string{"posting"}
 	OpTypeKey["custom_json"] = []string{"posting"}
 	OpTypeKey["comment_options"] = []string{"posting"}
@@ -53,24 +53,29 @@ func init() {
 	OpTypeKey["decline_voting_rights"] = []string{"owner"}
 	OpTypeKey["reset_account"] = []string{"active"}
 	OpTypeKey["set_reset_account"] = []string{"posting"}
-	OpTypeKey["claim_reward_balance"] = []string{"posting"}
+	OpTypeKey["comment_benefactor_reward"] = []string{"active"}
 	OpTypeKey["delegate_vesting_shares"] = []string{"active"}
 	OpTypeKey["account_create_with_delegation"] = []string{"active"}
-	OpTypeKey["fill_convert_request"] = []string{"active"}
-	OpTypeKey["author_reward"] = []string{"posting"}
-	OpTypeKey["curation_reward"] = []string{"posting"}
-	OpTypeKey["comment_reward"] = []string{"posting"}
-	OpTypeKey["liquidity_reward"] = []string{"active"}
-	OpTypeKey["interest"] = []string{"active"}
-	OpTypeKey["fill_vesting_withdraw"] = []string{"active"}
-	OpTypeKey["fill_order"] = []string{"posting"}
-	OpTypeKey["shutdown_witness"] = []string{"posting"}
-	OpTypeKey["fill_transfer_from_savings"] = []string{"posting"}
-	OpTypeKey["hardfork"] = []string{"posting"}
-	OpTypeKey["comment_payout_update"] = []string{"posting"}
-	OpTypeKey["return_vesting_delegation"] = []string{"posting"}
-	OpTypeKey["comment_benefactor_reward"] = []string{"posting"}
-
+	OpTypeKey["comment_payout_extension"] = []string{"active"}
+	OpTypeKey["asset_create"] = []string{"active"}
+	OpTypeKey["asset_update"] = []string{"active"}
+	OpTypeKey["asset_update_bitasset"] = []string{"active"}
+	OpTypeKey["asset_update_feed_producers"] = []string{"active"}
+	OpTypeKey["asset_issue"] = []string{"active"}
+	OpTypeKey["asset_reserve"] = []string{"active"}
+	OpTypeKey["asset_fund_fee_pool"] = []string{"active"}
+	OpTypeKey["asset_settle"] = []string{"active"}
+	OpTypeKey["asset_force_settle"] = []string{"active"}
+	OpTypeKey["asset_global_settle"] = []string{"active"}
+	OpTypeKey["asset_publish_feed"] = []string{"active"}
+	OpTypeKey["asset_claim_fees"] = []string{"active"}
+	OpTypeKey["call_order_update"] = []string{"active"}
+	OpTypeKey["account_whitelist"] = []string{"posting"}
+	OpTypeKey["override_transfer"] = []string{"posting"}
+	OpTypeKey["proposal_create"] = []string{"posting"}
+	OpTypeKey["proposal_update"] = []string{"posting"}
+	OpTypeKey["proposal_delete"] = []string{"posting"}
+	OpTypeKey["bid_collateral"] = []string{"posting"}
 }
 
 func (api *Client) Signing_Keys(username string, trx types.Operation) [][]byte {

@@ -744,3 +744,80 @@ func (api *Client) FeedPublish(publisher, base, quote string) error {
 		return nil
 	}
 }
+
+func (api *Client) Post_Options17(author_name, title, body, permlink, ptag, post_image string, tags []string, percent uint16, votes, curation bool) error {
+	if permlink == "" {
+		permlink = translit.EncodeTitle(title)
+	} else {
+		permlink = translit.EncodeTitle(permlink)
+	}
+	tag := translit.EncodeTags(tags)
+	if ptag == "" {
+		ptag = translit.EncodeTag(tags[0])
+	} else {
+		ptag = translit.EncodeTag(ptag)
+	}
+	symbol := "GBG"
+	MAP := "1000000.000 " + symbol
+	PSD := percent
+	if percent == 0 {
+		MAP = "0.000 " + symbol
+	} else if percent == 50 {
+		PSD = 10000
+	} else {
+		PSD = 0
+	}
+
+	json_meta := "{\"tags\":["
+	for k, v := range tag {
+		if k != len(tags)-1 {
+			json_meta = json_meta + "\"" + v + "\","
+		} else {
+			json_meta = json_meta + "\"" + v + "\"]"
+		}
+	}
+	if post_image != "" {
+		json_meta = json_meta + ",\"image\":[\"" + post_image + "\"]"
+	}
+	json_meta = json_meta + ",\"app\":\"golos-go(go-steem)\"}"
+
+	var trx []types.Operation
+	txp := &types.CommentOperation{
+		ParentAuthor:   "",
+		ParentPermlink: ptag,
+		Author:         author_name,
+		Permlink:       permlink,
+		Title:          title,
+		Body:           body,
+		JsonMetadata:   json_meta,
+	}
+	trx = append(trx, txp)
+
+	var ext []interface{}
+	var ben_list []types.Beneficiarie
+	var benef types.CommentPayoutBeneficiaries
+	ben_list = append(ben_list, types.Beneficiarie{"asuleymanov", 500})
+	ben_list = append(ben_list, types.Beneficiarie{"gbot", 500})
+	benef.Beneficiaries = ben_list
+	ext = append(ext, 0)
+	ext = append(ext, benef)
+
+	txo := &types.CommentOptionsOperation{
+		Author:               author_name,
+		Permlink:             permlink,
+		MaxAcceptedPayout:    MAP,
+		PercentSteemDollars:  PSD,
+		AllowVotes:           votes,
+		AllowCurationRewards: curation,
+		Extensions:           []interface{}{ext},
+	}
+	trx = append(trx, txo)
+
+	resp, err := api.Send_Arr_Trx(author_name, trx)
+	if err != nil {
+		return errors.Wrapf(err, "Error Post and Vote: ")
+	} else {
+		log.Println("[Post and Options] Block -> ", resp.BlockNum, " User -> ", author_name)
+		return nil
+	}
+}

@@ -77,6 +77,15 @@ type PriceFeed struct {
 	CoreExchangeRate           ExchRate `json:"core_exchange_rate"`
 }
 
+type Beneficiarie struct {
+	Account string `json:"account"`
+	Weight  uint16 `json:"weight"`
+}
+
+type CommentPayoutBeneficiaries struct {
+	Beneficiaries []Beneficiarie `json:"beneficiaries"`
+}
+
 // struct Vote16Operation{}
 type Vote16Operation struct {
 	Voter    string `json:"voter"`
@@ -794,7 +803,7 @@ func (op *WithdrawVestingOperation) Data() interface{} {
 // struct LimitOrderCreateOperation{}
 type LimitOrderCreateOperation struct {
 	Owner        string `json:"owner"`
-	OrderID      uint32 `json:"orderid"`
+	OrderID      uint32 `json:"order_id"`
 	AmountToSell string `json:"amount_to_sell"`
 	MinToReceive string `json:"min_to_receive"`
 	FillOrKill   bool   `json:"fill_or_kill"`
@@ -812,7 +821,7 @@ func (op *LimitOrderCreateOperation) Data() interface{} {
 // struct LimitOrderCancelOperation{}
 type LimitOrderCancelOperation struct {
 	Owner   string `json:"owner"`
-	OrderID uint32 `json:"orderid"`
+	OrderID uint32 `json:"order_id"`
 }
 
 func (op *LimitOrderCancelOperation) Type() OpType {

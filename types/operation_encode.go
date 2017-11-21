@@ -1,13 +1,15 @@
 package types
 
 import (
+	"encoding/json"
+
 	"github.com/asuleymanov/golos-go/encoding/transaction"
 )
 
-// struct CustomOperation{}
-// struct CustomJSONOperation{}
-// struct CustomBinaryOperation{}
-// struct VoteOperation{}
+// encode CustomOperation{}
+// encode CustomJSONOperation{} in to file operation_custom_json.go
+// encode CustomBinaryOperation{}
+// encode VoteOperation{}
 func (op *VoteOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeVote.Code()))
@@ -18,7 +20,7 @@ func (op *VoteOperation) MarshalTransaction(encoder *transaction.Encoder) error 
 	return enc.Err()
 }
 
-// struct CommentOperation{}
+// encode CommentOperation{}
 func (op *CommentOperation) IsStoryOperation() bool {
 	return op.ParentAuthor == ""
 }
@@ -40,7 +42,7 @@ func (op *CommentOperation) MarshalTransaction(encoder *transaction.Encoder) err
 	return enc.Err()
 }
 
-// struct TransferOperation{}
+// encode TransferOperation{}
 func (op *TransferOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeTransfer.Code()))
@@ -51,7 +53,7 @@ func (op *TransferOperation) MarshalTransaction(encoder *transaction.Encoder) er
 	return enc.Err()
 }
 
-// struct TransferToVestingOperation{}
+// encode TransferToVestingOperation{}
 func (op *TransferToVestingOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeTransferToVesting.Code()))
@@ -61,7 +63,7 @@ func (op *TransferToVestingOperation) MarshalTransaction(encoder *transaction.En
 	return enc.Err()
 }
 
-// struct WithdrawVestingOperation{}
+// encode WithdrawVestingOperation{}
 func (op *WithdrawVestingOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeWithdrawVesting.Code()))
@@ -70,7 +72,7 @@ func (op *WithdrawVestingOperation) MarshalTransaction(encoder *transaction.Enco
 	return enc.Err()
 }
 
-// struct LimitOrderCreateOperation{}
+// encode LimitOrderCreateOperation{}
 func (op *LimitOrderCreateOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeLimitOrderCreate.Code()))
@@ -83,7 +85,7 @@ func (op *LimitOrderCreateOperation) MarshalTransaction(encoder *transaction.Enc
 	return enc.Err()
 }
 
-// struct LimitOrderCancelOperation{}
+// encode LimitOrderCancelOperation{}
 func (op *LimitOrderCancelOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeLimitOrderCancel.Code()))
@@ -92,7 +94,7 @@ func (op *LimitOrderCancelOperation) MarshalTransaction(encoder *transaction.Enc
 	return enc.Err()
 }
 
-// struct FeedPublishOperation{}
+// encode FeedPublishOperation{}
 func (op *FeedPublishOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeFeedPublish.Code()))
@@ -102,7 +104,7 @@ func (op *FeedPublishOperation) MarshalTransaction(encoder *transaction.Encoder)
 	return enc.Err()
 }
 
-// struct ConvertOperation{}
+// encode ConvertOperation{}
 func (op *ConvertOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeConvert.Code()))
@@ -112,10 +114,10 @@ func (op *ConvertOperation) MarshalTransaction(encoder *transaction.Encoder) err
 	return enc.Err()
 }
 
-// struct AccountCreateOperation{}
-// struct AccountUpdateOperation{}
-// struct WitnessUpdateOperation{}
-// struct AccountWitnessVoteOperation{}
+// encode AccountCreateOperation{}
+// encode AccountUpdateOperation{}
+// encode WitnessUpdateOperation{}
+// encode AccountWitnessVoteOperation{}
 func (op *AccountWitnessVoteOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeAccountWitnessVote.Code()))
@@ -125,7 +127,7 @@ func (op *AccountWitnessVoteOperation) MarshalTransaction(encoder *transaction.E
 	return enc.Err()
 }
 
-// struct AccountWitnessProxyOperation{}
+// encode AccountWitnessProxyOperation{}
 func (op *AccountWitnessProxyOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeAccountWitnessProxy.Code()))
@@ -134,9 +136,9 @@ func (op *AccountWitnessProxyOperation) MarshalTransaction(encoder *transaction.
 	return enc.Err()
 }
 
-// struct POWOperation{}
-// struct ReportOverProductionOperation{}
-// struct DeleteCommentOperation{}
+// encode POWOperation{}
+// encode ReportOverProductionOperation{}
+// encode DeleteCommentOperation{}
 func (op *DeleteCommentOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeDeleteComment.Code()))
@@ -145,7 +147,7 @@ func (op *DeleteCommentOperation) MarshalTransaction(encoder *transaction.Encode
 	return enc.Err()
 }
 
-// struct CommentOptionsOperation{}
+// encode CommentOptionsOperation{}
 func (op *CommentOptionsOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeCommentOptions.Code()))
@@ -155,11 +157,29 @@ func (op *CommentOptionsOperation) MarshalTransaction(encoder *transaction.Encod
 	enc.Encode(op.PercentSteemDollars)
 	enc.EncodeBool(op.AllowVotes)
 	enc.EncodeBool(op.AllowCurationRewards)
-	enc.Encode(byte(0))
+	if len(op.Extensions) > 0 {
+		//Parse Beneficiaries
+		z, _ := json.Marshal(op.Extensions[0])
+		var l []interface{}
+		_ = json.Unmarshal(z, &l)
+		z1, _ := json.Marshal(l[1])
+		var d CommentPayoutBeneficiaries
+		_ = json.Unmarshal(z1, &d)
+
+		enc.Encode(byte(1))
+		enc.Encode(byte(0))
+		enc.EncodeUVarint(uint64(len(d.Beneficiaries)))
+		for _, val := range d.Beneficiaries {
+			enc.Encode(val.Account)
+			enc.Encode(val.Weight)
+		}
+	} else {
+		enc.Encode(byte(0))
+	}
 	return enc.Err()
 }
 
-// struct SetWithdrawVestingRouteOperation{}
+// encode SetWithdrawVestingRouteOperation{}
 func (op *SetWithdrawVestingRouteOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeSetWithdrawVestingRoute.Code()))
@@ -170,12 +190,12 @@ func (op *SetWithdrawVestingRouteOperation) MarshalTransaction(encoder *transact
 	return enc.Err()
 }
 
-// struct LimitOrderCreate2Operation{}
-// struct ChallengeAuthorityOperation{}
-// struct ProveAuthorityOperation{}
-// struct RequestAccountRecoveryOperation{}
-// struct RecoverAccountOperation{}
-// struct ChangeRecoveryAccountOperation{}
+// encode LimitOrderCreate2Operation{}
+// encode ChallengeAuthorityOperation{}
+// encode ProveAuthorityOperation{}
+// encode RequestAccountRecoveryOperation{}
+// encode RecoverAccountOperation{}
+// encode ChangeRecoveryAccountOperation{}
 func (op *ChangeRecoveryAccountOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeChangeRecoveryAccount.Code()))
@@ -185,12 +205,12 @@ func (op *ChangeRecoveryAccountOperation) MarshalTransaction(encoder *transactio
 	return enc.Err()
 }
 
-// struct EscrowTransferOperation{}
-// struct EscrowDisputeOperation{}
-// struct EscrowReleaseOperation{}
-// struct POW2Operation{}
-// struct EscrowApproveOperation{}
-// struct TransferToSavingsOperation{}
+// encode EscrowTransferOperation{}
+// encode EscrowDisputeOperation{}
+// encode EscrowReleaseOperation{}
+// encode POW2Operation{}
+// encode EscrowApproveOperation{}
+// encode TransferToSavingsOperation{}
 func (op *TransferToSavingsOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeTransferToSavings.Code()))
@@ -201,7 +221,7 @@ func (op *TransferToSavingsOperation) MarshalTransaction(encoder *transaction.En
 	return enc.Err()
 }
 
-// struct TransferFromSavingsOperation{}
+// encode TransferFromSavingsOperation{}
 func (op *TransferFromSavingsOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeTransferFromSavings.Code()))
@@ -213,7 +233,7 @@ func (op *TransferFromSavingsOperation) MarshalTransaction(encoder *transaction.
 	return enc.Err()
 }
 
-// struct CancelTransferFromSavingsOperation{}
+// encode CancelTransferFromSavingsOperation{}
 func (op *CancelTransferFromSavingsOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeCancelTransferFromSavings.Code()))
@@ -222,7 +242,7 @@ func (op *CancelTransferFromSavingsOperation) MarshalTransaction(encoder *transa
 	return enc.Err()
 }
 
-// struct DeclineVotingRightsOperation{}
+// encode DeclineVotingRightsOperation{}
 func (op *DeclineVotingRightsOperation) MarshalTransaction(encoder *transaction.Encoder) error {
 	enc := transaction.NewRollingEncoder(encoder)
 	enc.EncodeUVarint(uint64(TypeDeclineVotingRights.Code()))
@@ -231,28 +251,28 @@ func (op *DeclineVotingRightsOperation) MarshalTransaction(encoder *transaction.
 	return enc.Err()
 }
 
-// struct ResetAccountOperation{}
-// struct SetResetAccountOperation{}
-// struct CommentBenefactorRewardOperation{}
-// struct DelegateVestingSharesOperation{}
-// struct AccountCreateWithDelegationOperation{}
-// struct CommentPayoutExtensionOperation{}
-// struct AssetCreateOperation{}
-// struct AssetUpdateOperation{}
-// struct AssetUpdateBitassetOperation{}
-// struct AssetUpdateFeedProducersOperation{}
-// struct AssetIssueOperation{}
-// struct AssetReserveOperation{}
-// struct AssetFundFeePoolOperation{}
-// struct AssetSettleOperation{}
-// struct AssetForceSettleOperation{}
-// struct AssetGlobalSettleOperation{}
-// struct AssetPublishFeedOperation{}
-// struct AssetClaimFeesOperation{}
-// struct CallOrderUpdateOperation{}
-// struct AccountWhitelistOperation{}
-// struct OverrideTransferOperation{}
-// struct ProposalCreateOperation{}
-// struct ProposalUpdateOperation{}
-// struct ProposalDeleteOperation{}
-// struct BidCollateralOperation{}
+// encode ResetAccountOperation{}
+// encode SetResetAccountOperation{}
+// encode CommentBenefactorRewardOperation{}
+// encode DelegateVestingSharesOperation{}
+// encode AccountCreateWithDelegationOperation{}
+// encode CommentPayoutExtensionOperation{}
+// encode AssetCreateOperation{}
+// encode AssetUpdateOperation{}
+// encode AssetUpdateBitassetOperation{}
+// encode AssetUpdateFeedProducersOperation{}
+// encode AssetIssueOperation{}
+// encode AssetReserveOperation{}
+// encode AssetFundFeePoolOperation{}
+// encode AssetSettleOperation{}
+// encode AssetForceSettleOperation{}
+// encode AssetGlobalSettleOperation{}
+// encode AssetPublishFeedOperation{}
+// encode AssetClaimFeesOperation{}
+// encode CallOrderUpdateOperation{}
+// encode AccountWhitelistOperation{}
+// encode OverrideTransferOperation{}
+// encode ProposalCreateOperation{}
+// encode ProposalUpdateOperation{}
+// encode ProposalDeleteOperation{}
+// encode BidCollateralOperation{}
