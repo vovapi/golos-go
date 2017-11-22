@@ -745,7 +745,7 @@ func (api *Client) FeedPublish(publisher, base, quote string) error {
 	}
 }
 
-func (api *Client) Post_Options17(author_name, title, body, permlink, ptag, post_image string, tags []string, percent uint16, votes, curation bool) error {
+func (api *Client) Post_17(author_name, title, body, permlink, ptag, post_image string, tags []string, percent uint16, votes, curation bool) error {
 	if permlink == "" {
 		permlink = translit.EncodeTitle(title)
 	} else {
@@ -796,8 +796,7 @@ func (api *Client) Post_Options17(author_name, title, body, permlink, ptag, post
 	var ext []interface{}
 	var ben_list []types.Beneficiarie
 	var benef types.CommentPayoutBeneficiaries
-	ben_list = append(ben_list, types.Beneficiarie{"asuleymanov", 500})
-	ben_list = append(ben_list, types.Beneficiarie{"gbot", 500})
+	ben_list = append(ben_list, types.Beneficiarie{"gg172", 500})
 	benef.Beneficiaries = ben_list
 	ext = append(ext, 0)
 	ext = append(ext, benef)
@@ -818,6 +817,53 @@ func (api *Client) Post_Options17(author_name, title, body, permlink, ptag, post
 		return errors.Wrapf(err, "Error Post and Vote: ")
 	} else {
 		log.Println("[Post and Options] Block -> ", resp.BlockNum, " User -> ", author_name)
+		return nil
+	}
+}
+
+func (api *Client) Comment_17(user_name, author_name, ppermlink, body string) error {
+	var trx []types.Operation
+
+	times, _ := strconv.Unquote(time.Now().Add(30 * time.Second).UTC().Format(fdt))
+	permlink := "re-" + author_name + "-" + ppermlink + "-" + times
+	tx := &types.CommentOperation{
+		ParentAuthor:   author_name,
+		ParentPermlink: ppermlink,
+		Author:         user_name,
+		Permlink:       permlink,
+		Title:          "",
+		Body:           body,
+		JsonMetadata:   "{\"app\":\"golos-go(go-steem)\"}",
+	}
+	trx = append(trx, tx)
+
+	MAP := "1000000.000 GBG"
+	PSD := 10000
+
+	var ext []interface{}
+	var ben_list []types.Beneficiarie
+	var benef types.CommentPayoutBeneficiaries
+	ben_list = append(ben_list, types.Beneficiarie{"gg172", 500})
+	benef.Beneficiaries = ben_list
+	ext = append(ext, 0)
+	ext = append(ext, benef)
+
+	txo := &types.CommentOptionsOperation{
+		Author:               author_name,
+		Permlink:             permlink,
+		MaxAcceptedPayout:    MAP,
+		PercentSteemDollars:  uint16(PSD),
+		AllowVotes:           true,
+		AllowCurationRewards: true,
+		Extensions:           []interface{}{ext},
+	}
+	trx = append(trx, txo)
+
+	resp, err := api.Send_Arr_Trx(user_name, trx)
+	if err != nil {
+		return errors.Wrapf(err, "Error Comment OPT: ")
+	} else {
+		log.Println("[Comment OPT] Block -> ", resp.BlockNum, " User -> ", user_name)
 		return nil
 	}
 }
