@@ -647,3 +647,19 @@ func (api *Client) FeedPublish(publisher, base, quote string) error {
 		return nil
 	}
 }
+
+func (api *Client) DelegateVestingShares(from, to, share string) error {
+	tx := &types.DelegateVestingSharesOperation{
+		Delegator:     from,
+		Delegatee:     to,
+		VestingShares: share,
+	}
+
+	resp, err := api.Send_Trx(from, tx)
+	if err != nil {
+		return errors.Wrapf(err, "Error DelegateVestingShares: ")
+	} else {
+		log.Println("[DelegateVestingShares] Block -> ", resp.BlockNum, " DelegateVestingShares user -> ", from)
+		return nil
+	}
+}

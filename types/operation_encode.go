@@ -255,6 +255,15 @@ func (op *DeclineVotingRightsOperation) MarshalTransaction(encoder *transaction.
 // encode SetResetAccountOperation{}
 // encode CommentBenefactorRewardOperation{}
 // encode DelegateVestingSharesOperation{}
+func (op *DelegateVestingSharesOperation) MarshalTransaction(encoder *transaction.Encoder) error {
+	enc := transaction.NewRollingEncoder(encoder)
+	enc.EncodeUVarint(uint64(TypeDelegateVestingShares.Code()))
+	enc.Encode(op.Delegator)
+	enc.Encode(op.Delegatee)
+	enc.EncodeMoney(op.VestingShares)
+	return enc.Err()
+}
+
 // encode AccountCreateWithDelegationOperation{}
 // encode CommentPayoutExtensionOperation{}
 // encode AssetCreateOperation{}
