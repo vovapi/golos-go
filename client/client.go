@@ -3,6 +3,7 @@ package client
 import (
 	// Vendor
 	"github.com/pkg/errors"
+	"log"
 
 	// RPC
 	"github.com/asuleymanov/golos-go"
@@ -38,13 +39,13 @@ func initclient(url []string) *rpc.Client {
 	// Инициализация Websocket
 	t, err := websocket.NewTransport(url)
 	if err != nil {
-		panic(errors.Wrapf(err, "Error Websocket: "))
+		log.Println("[WebSocket] ", err)
 	}
 
 	// Инициализация RPC клиента
 	client, err := rpc.NewClient(t)
 	if err != nil {
-		panic(errors.Wrapf(err, "Error RPC: "))
+		log.Println("[RPC] ", err)
 	}
 	//defer client.Close()
 	return client
