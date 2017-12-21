@@ -126,10 +126,14 @@ func (api *Client) Verify_Delegate_Posting_Key_Sign(username string, arr []strin
 		return nil
 	} else {
 		for _, val := range acc {
-			for _, v := range val.Posting.AccountAuths {
-				l := strings.Split(strings.Replace(strings.Replace(fmt.Sprintf("%v", v), "[", "", -1), "]", "", -1), " ")[0]
-				if l == username {
-					truearr = append(truearr, l)
+			if val.Name == username {
+				truearr = append(truearr, val.Name)
+			} else {
+				for _, v := range val.Posting.AccountAuths {
+					l := strings.Split(strings.Replace(strings.Replace(fmt.Sprintf("%v", v), "[", "", -1), "]", "", -1), " ")[0]
+					if l == username {
+						truearr = append(truearr, val.Name)
+					}
 				}
 			}
 		}

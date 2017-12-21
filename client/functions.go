@@ -303,7 +303,7 @@ func (api *Client) Follow(follower, following string) error {
 
 	resp, err := api.Send_Trx(follower, trx)
 	if err != nil {
-		return errors.Wrapf(err, "Error Reblog: ")
+		return errors.Wrapf(err, "Error Follow: ")
 	} else {
 		log.Println("[Follow] Block -> ", resp.BlockNum, " Follower user -> ", follower, " Following user -> ", following)
 		return nil
@@ -325,7 +325,7 @@ func (api *Client) Unfollow(follower, following string) error {
 
 	resp, err := api.Send_Trx(follower, trx)
 	if err != nil {
-		return errors.Wrapf(err, "Error Reblog: ")
+		return errors.Wrapf(err, "Error Unfollow: ")
 	} else {
 		log.Println("[Unfollow] Block -> ", resp.BlockNum, " Unfollower user -> ", follower, " Unfollowing user -> ", following)
 		return nil
@@ -347,7 +347,7 @@ func (api *Client) Ignore(follower, following string) error {
 
 	resp, err := api.Send_Trx(follower, trx)
 	if err != nil {
-		return errors.Wrapf(err, "Error Reblog: ")
+		return errors.Wrapf(err, "Error Ignore: ")
 	} else {
 		log.Println("[Ignore] Block -> ", resp.BlockNum, " Ignore user -> ", follower, " Ignoring user -> ", following)
 		return nil
@@ -369,7 +369,7 @@ func (api *Client) Notice(follower, following string) error {
 
 	resp, err := api.Send_Trx(follower, trx)
 	if err != nil {
-		return errors.Wrapf(err, "Error Reblog: ")
+		return errors.Wrapf(err, "Error Notice: ")
 	} else {
 		log.Println("[Notice] Block -> ", resp.BlockNum, " Notice user -> ", follower, " Noticing user -> ", following)
 		return nil
