@@ -4,7 +4,7 @@ import (
 	// Stdlib
 	"log"
 	"strconv"
-	_ "strings"
+	"strings"
 	"time"
 
 	// Vendor
@@ -94,6 +94,7 @@ func (api *Client) Comment(user_name, author_name, ppermlink, body string, v *PC
 
 	times, _ := strconv.Unquote(time.Now().Add(30 * time.Second).UTC().Format(fdt))
 	permlink := "re-" + author_name + "-" + ppermlink + "-" + times
+	permlink = strings.Replace(permlink, ".", "-", -1)
 
 	tx := &types.CommentOperation{
 		ParentAuthor:   author_name,
